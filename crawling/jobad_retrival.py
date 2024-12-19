@@ -141,8 +141,6 @@ def clean_pdf(content):
 # init requests
 session = requests.Session()
 session.headers.update({
-    'Origin': 'https://www.jobindex.dk',
-    'Referer': 'https://www.jobindex.dk/',
     'User-Agent': 'Mozilla/5.0 (X11; CrOS x86_64 14541.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'Accept-Encoding': 'gzip, deflate, br',
