@@ -94,7 +94,7 @@ for jobad in dbr:
     for i, split in enumerate(splitted):
 
         # if prefix for bullet, continue
-        if i + 1 < len(splitted) and splitted[i + 1][0] in bullets:
+        if split[0] not in bullets and i + 1 < len(splitted) and splitted[i + 1][0] in bullets:
             continue
 
         # append prefix if bullet
