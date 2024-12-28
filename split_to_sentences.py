@@ -1,39 +1,11 @@
-# dependencies
-from dbconfig import dbconfig
-import mysql.connector
-import re
-
-# connect to maria db
-try:
-    connr = mysql.connector.connect(**dbconfig)
-    dbr = connr.cursor(dictionary=True)
-    connw = mysql.connector.connect(**dbconfig)
-    dbw = connw.cursor()
-except mysql.connector.Error as e:
-    print(e)
-
-# pre truncate for testing
-#dbw.execute('TRUNCATE TABLE sentences')
-#dbw.execute('TRUNCATE TABLE sentences_jobads')
-#connw.commit()
-
-# get harvested ads
-dbr.execute('SELECT * FROM jobads WHERE crawled IS NOT NULL AND content != ""')
-
-# predefine bullets
-bullets = ['•', '·', '◾']
-
-# get sentences from ads
-for jobad in dbr:
-
-    # progress
-    try: num += 1
-    except: num = 1
-    if not num % 1000:
-        print('{}K'.format(int(num / 1000)), flush=True)
+# define function to split text body
+def split_to_sentences(body):
 
     # split to lines
-    lines = jobad['content'].split('\n')
+    lines = body.split('\n')
+
+    # define bullets
+    bullets = ['•', '·', '◾']
 
     # split lines if not bullets
     splitted = []
@@ -95,6 +67,7 @@ for jobad in dbr:
 
         # if prefix for bullet, continue
         if split[0] not in bullets and i + 1 < len(splitted) and splitted[i + 1][0] in bullets:
+            sentences.append('')
             continue
 
         # append prefix if bullet
@@ -112,15 +85,5 @@ for jobad in dbr:
 
         # append
         sentences.append(split)
-    
-    # add to db
-    for i, sentence in enumerate(sentences):
-        dbw.execute('INSERT INTO sentences (content) VALUES (%s) ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)', [sentence])
-        dbw.execute('INSERT IGNORE INTO sentences_jobads VALUES (LAST_INSERT_ID(), %s, %s)', [jobad['id'], i])
-    connw.commit()
 
-# kill db connection
-dbr.close()
-connr.close()
-dbw.close()
-connw.close()
+    return sentences
