@@ -176,7 +176,7 @@ def deep_content(driver):
 
 # get ads for harvesting
 db.execute('SELECT * FROM jobads WHERE crawled IS NULL LIMIT %s',
-           [10 if speedup else 10])
+           [100 if speedup else 10])
 jobads = db.fetchall()
 
 # go through all ads
